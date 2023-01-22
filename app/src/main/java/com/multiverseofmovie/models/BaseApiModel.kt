@@ -10,6 +10,4 @@ open class BaseApiModel(
     val statusMessage: String = "",
     @SerializedName("success")
     val success: Boolean = false,
-) {
-
-}
+)

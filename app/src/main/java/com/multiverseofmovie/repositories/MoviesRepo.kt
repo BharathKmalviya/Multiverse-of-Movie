@@ -3,6 +3,7 @@ package com.multiverseofmovie.repositories
 import android.content.Context
 import com.multiverseofmovie.R
 import com.multiverseofmovie.api_services.ApiServices
+import com.multiverseofmovie.extensions.safeApiCall
 import com.multiverseofmovie.models.BaseApiModel
 import com.multiverseofmovie.models.MovieCreditsModel
 import com.multiverseofmovie.models.MovieDetailsModel
@@ -23,7 +24,9 @@ class MoviesRepo @Inject constructor(
         val params = HashMap<String, String>()
         params["api_key"] = apiKey
         params["language"] = language
-        return safeApiCall(apiServices.getMovieDetails(params))
+        return context.safeApiCall(MovieDetailsModel::class.java){
+            apiServices.getMovieDetails(params)
+        }
     }
 
     // api call to get movie credits
@@ -31,31 +34,8 @@ class MoviesRepo @Inject constructor(
         val params = HashMap<String, String>()
         params["api_key"] = apiKey
         params["language"] = language
-        return safeApiCall(apiServices.getMovieCredits(params))
-    }
-
-
-    /*
-    * this function handle and return response with state to handle in UI
-    * */
-    private fun <T> safeApiCall(rawResponse: Response<T>): Resource<T> {
-        return try {
-            if (isConnectedToInternet(context)) {
-                if (rawResponse.isSuccessful){
-                    return Resource.success(rawResponse as T)
-                }else{
-                    Resource.error((rawResponse as BaseApiModel)?.statusMessage)
-                }
-            } else {
-                Resource.error(context.getString(R.string.no_internet_connection), data = null)
-            }
-        } catch (e: Exception) {
-            LogHelper.printStackTrace(e)
-            return if (isConnectedToInternet(context)) {
-                Resource.error(context.getString(R.string.default_error_message), data = null)
-            } else {
-                Resource.error(context.getString(R.string.no_internet_connection), data = null)
-            }
+        return context.safeApiCall(MovieCreditsModel::class.java){
+            apiServices.getMovieCredits(params)
         }
     }
 }

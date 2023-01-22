@@ -3,10 +3,39 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools">
 
+    <data>
+
+        <import type="com.multiverseofmovie.models.MovieDetailsModel" />
+
+        <import type="com.multiverseofmovie.enums.Status" />
+
+        <variable
+            name="model"
+            type="MovieDetailsModel" />
+
+        <variable
+            name="status"
+            type="Status" />
+    </data>
+
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:fitsSystemWindows="true"
         tools:context=".ui.movie_details.MainActivity">
+
+        <ImageView
+            android:id="@+id/ivBgDrop"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:contentDescription="@string/back_drop_image"
+            android:scaleType="centerCrop"
+            app:imageUrl="@{model.getBackDrop()}"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHeight_percent="0.3"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:src="@tools:sample/avatars" />
 
         <androidx.core.widget.NestedScrollView
             android:id="@+id/nestedScrollView"
@@ -16,26 +45,22 @@
 
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content">
-
-                <ImageView
-                    android:id="@+id/ivBgDrop"
-                    android:layout_width="match_parent"
-                    android:layout_height="0dp"
-                    android:contentDescription="@string/back_drop_image"
-                    android:scaleType="centerCrop"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintHeight_percent="0.2"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent"
-                    tools:src="@tools:sample/avatars" />
+                android:layout_height="wrap_content"
+                android:paddingBottom="60dp">
 
                 <androidx.constraintlayout.widget.Guideline
                     android:id="@+id/headerGuideline"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:orientation="horizontal"
-                    app:layout_constraintGuide_percent="0.15" />
+                    app:layout_constraintGuide_percent="0.16" />
+
+                <androidx.constraintlayout.widget.Guideline
+                    android:id="@+id/toStartGuideline"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    app:layout_constraintGuide_percent="0.2" />
 
                 <androidx.cardview.widget.CardView
                     android:id="@+id/cvHeader"
@@ -56,9 +81,11 @@
                             android:id="@+id/tvTitle"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
+                            android:text="@{model.originalTitle}"
                             android:textAppearance="@style/TextBold"
                             android:textColor="@color/grey_800"
                             android:textSize="16sp"
+                            app:layout_constrainedWidth="true"
                             app:layout_constraintEnd_toEndOf="parent"
                             app:layout_constraintHorizontal_bias="0"
                             app:layout_constraintStart_toStartOf="parent"
@@ -69,9 +96,11 @@
                             android:id="@+id/tvDesc"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
+                            android:text="@{model.overview}"
                             android:textAppearance="@style/TextRegular"
-                            android:textColor="@color/grey_400"
+                            android:textColor="@color/grey_500"
                             android:textSize="14sp"
+                            app:layout_constrainedWidth="true"
                             app:layout_constraintEnd_toEndOf="parent"
                             app:layout_constraintHorizontal_bias="0"
                             app:layout_constraintStart_toStartOf="parent"
@@ -79,6 +108,15 @@
                             tools:text="Doctor Strange, with the help of mystical allies both old and new, traverses the mind-bending and dangerous alternate realities of the Multiverse to confront a mysterious new adversary." />
                     </androidx.constraintlayout.widget.ConstraintLayout>
                 </androidx.cardview.widget.CardView>
+
+                <View
+                    android:layout_width="0dp"
+                    android:layout_height="0dp"
+                    android:background="@color/white"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/toStartGuideline" />
 
                 <TextView
                     android:id="@+id/tvRelease"
@@ -89,7 +127,7 @@
                     android:textAppearance="@style/TextSemiBold"
                     android:textColor="@color/grey_500"
                     android:textSize="16sp"
-                    app:layout_constraintEnd_toEndOf="@id/endGuideLine"
+                    app:layout_constraintEnd_toEndOf="@id/centerLeftGuideline"
                     app:layout_constraintHorizontal_bias="0"
                     app:layout_constraintStart_toStartOf="@id/startGuideLine"
                     app:layout_constraintTop_toBottomOf="@id/cvHeader" />
@@ -98,25 +136,100 @@
                     android:id="@+id/tvReleaseValue"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="@string/genres"
+                    android:text="@{model.getFormattedDate()}"
                     android:textAppearance="@style/TextLight"
                     android:textColor="@color/grey_400"
                     android:textSize="14sp"
-                    app:layout_constraintEnd_toEndOf="@id/endGuideLine"
+                    app:layout_constrainedWidth="true"
+                    app:layout_constraintEnd_toEndOf="@id/centerLeftGuideline"
                     app:layout_constraintHorizontal_bias="0"
                     app:layout_constraintStart_toStartOf="@id/startGuideLine"
                     app:layout_constraintTop_toBottomOf="@id/tvRelease"
                     tools:text="@tools:sample/full_names" />
 
+
+                <TextView
+                    android:id="@+id/tvBudget"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="10dp"
+                    android:text="@string/budget"
+                    android:textAppearance="@style/TextSemiBold"
+                    android:textColor="@color/grey_500"
+                    android:textSize="16sp"
+                    app:layout_constrainedWidth="true"
+                    app:layout_constraintEnd_toEndOf="@id/centerRightGuideline"
+                    app:layout_constraintStart_toStartOf="@id/centerLeftGuideline"
+                    app:layout_constraintTop_toBottomOf="@id/cvHeader" />
+
+                <TextView
+                    android:id="@+id/tvBudgetValue"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@{model.getBudgetFormatted()}"
+                    android:textAppearance="@style/TextLight"
+                    android:textColor="@color/grey_400"
+                    android:textSize="14sp"
+                    app:layout_constrainedWidth="true"
+                    app:layout_constraintEnd_toEndOf="@id/centerRightGuideline"
+                    app:layout_constraintStart_toStartOf="@id/centerLeftGuideline"
+                    app:layout_constraintTop_toBottomOf="@id/tvBudget"
+                    tools:text="@tools:sample/full_names" />
+
+                <TextView
+                    android:id="@+id/tvRevenue"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="10dp"
+                    android:text="@string/revenue"
+                    android:textAppearance="@style/TextSemiBold"
+                    android:textColor="@color/grey_500"
+                    android:textSize="16sp"
+                    app:layout_constrainedWidth="true"
+                    app:layout_constraintEnd_toEndOf="@id/endGuideLine"
+                    app:layout_constraintStart_toStartOf="@id/centerRightGuideline"
+                    app:layout_constraintTop_toBottomOf="@id/cvHeader" />
+
+                <TextView
+                    android:id="@+id/tvRevenueValue"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@{model.getRevenueFormatted()}"
+                    android:textAppearance="@style/TextLight"
+                    android:textColor="@color/grey_400"
+                    android:textSize="14sp"
+                    app:layout_constrainedWidth="true"
+                    app:layout_constraintEnd_toEndOf="@id/endGuideLine"
+                    app:layout_constraintStart_toStartOf="@id/centerRightGuideline"
+                    app:layout_constraintTop_toBottomOf="@id/tvRevenue"
+                    tools:text="@tools:sample/full_names" />
+
+
+                <androidx.constraintlayout.widget.Guideline
+                    android:id="@+id/centerLeftGuideline"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    app:layout_constraintGuide_percent="0.33" />
+
+                <androidx.constraintlayout.widget.Guideline
+                    android:id="@+id/centerRightGuideline"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    app:layout_constraintGuide_percent="0.66" />
+
+
                 <TextView
                     android:id="@+id/tvGenres"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="10dp"
+                    android:layout_marginTop="15dp"
                     android:text="@string/genres"
                     android:textAppearance="@style/TextSemiBold"
                     android:textColor="@color/grey_500"
                     android:textSize="16sp"
+                    app:layout_constrainedWidth="true"
                     app:layout_constraintEnd_toEndOf="@id/endGuideLine"
                     app:layout_constraintHorizontal_bias="0"
                     app:layout_constraintStart_toStartOf="@id/startGuideLine"
@@ -126,15 +239,17 @@
                     android:id="@+id/tvGenresValue"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="@string/genres"
+                    android:text="@{model.getGenresStr()}"
                     android:textAppearance="@style/TextLight"
                     android:textColor="@color/grey_400"
                     android:textSize="14sp"
+                    app:layout_constrainedWidth="true"
                     app:layout_constraintEnd_toEndOf="@id/endGuideLine"
                     app:layout_constraintHorizontal_bias="0"
                     app:layout_constraintStart_toStartOf="@id/startGuideLine"
                     app:layout_constraintTop_toBottomOf="@id/tvGenres"
                     tools:text="@tools:sample/full_names" />
+
 
                 <TextView
                     android:id="@+id/tvCast"
@@ -155,13 +270,15 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:clipToPadding="false"
+                    android:nestedScrollingEnabled="false"
                     android:orientation="horizontal"
                     android:paddingHorizontal="20dp"
                     app:layoutManager="androidx.recyclerview.widget.GridLayoutManager"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@id/tvCast"
-                    app:spanCount="2" />
+                    app:spanCount="2"
+                    tools:listitem="@layout/item_cast" />
 
                 <TextView
                     android:id="@+id/tvCrew"
@@ -175,13 +292,15 @@
                     app:layout_constraintEnd_toEndOf="@id/endGuideLine"
                     app:layout_constraintHorizontal_bias="0"
                     app:layout_constraintStart_toStartOf="@id/startGuideLine"
-                    app:layout_constraintTop_toBottomOf="@id/recCasts" />
+                    app:layout_constraintTop_toBottomOf="@id/recCasts"
+                    tools:listitem="@layout/item_cast" />
 
                 <androidx.recyclerview.widget.RecyclerView
                     android:id="@+id/recCrew"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:clipToPadding="false"
+                    android:nestedScrollingEnabled="false"
                     android:orientation="horizontal"
                     android:paddingHorizontal="20dp"
                     app:layoutManager="androidx.recyclerview.widget.GridLayoutManager"
@@ -206,8 +325,8 @@
             </androidx.constraintlayout.widget.ConstraintLayout>
         </androidx.core.widget.NestedScrollView>
 
-
         <TextView
+            android:id="@+id/btnBook"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:background="@color/red_700"
@@ -218,5 +337,18 @@
             android:textColor="@color/white"
             android:textSize="24sp"
             app:layout_constraintBottom_toBottomOf="parent" />
+
+
+        <androidx.constraintlayout.widget.Group
+            android:id="@+id/contentGroup"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:constraint_referenced_ids="nestedScrollView,btnBook"
+            app:isVisible="@{(status == Status.SUCCESS)}" />
+
+        <include
+            android:id="@+id/errorLayout"
+            layout="@layout/component_error_layout"
+            app:status="@{status}" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

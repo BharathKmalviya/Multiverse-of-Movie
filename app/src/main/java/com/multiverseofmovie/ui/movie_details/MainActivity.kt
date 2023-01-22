@@ -1,16 +1,19 @@
 package com.multiverseofmovie.ui.movie_details
 
 import android.os.Bundle
+import android.view.WindowManager
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import com.multiverseofmovie.BuildConfig
-import com.multiverseofmovie.R
+import com.multiverseofmovie.adapters.CastAdapter
+import com.multiverseofmovie.adapters.CrewAdapter
 import com.multiverseofmovie.constants.AppConstants.ENGLISH
 import com.multiverseofmovie.databinding.ActivityMainBinding
 import com.multiverseofmovie.enums.Status.*
 import com.multiverseofmovie.utils.LogHelper
 import com.multiverseofmovie.utils.showShortToast
 import dagger.hilt.android.AndroidEntryPoint
+
 
 @AndroidEntryPoint
 class MainActivity : AppCompatActivity() {
@@ -19,9 +22,21 @@ class MainActivity : AppCompatActivity() {
 
     private val mViewModel by viewModels<MainViewModel>()
 
+    private val mCrewAdapter by lazy {
+        CrewAdapter()
+    }
+
+    private val mCastAdapter by lazy {
+        CastAdapter()
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
+        window.setFlags(
+            WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS,
+            WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS
+        )
         setContentView(binding.root)
         initView()
         setupObservers()
@@ -29,15 +44,20 @@ class MainActivity : AppCompatActivity() {
         loadData()
     }
 
-    private fun initView() {}
+    private fun initView() {
+        binding.recCrew.adapter = mCrewAdapter
+        binding.recCasts.adapter = mCastAdapter
+    }
+
     private fun setupObservers() {
         mViewModel.movieCreditsResponse.observe(this) {
             when (it.status) {
                 SUCCESS -> {
                     LogHelper.logD("API_RESPONSE", "MOVIE CREDITS -> ${it.data}")
+                    mCastAdapter.submitList(it.data?.cast.orEmpty())
+                    mCrewAdapter.submitList(it.data?.crew.orEmpty())
                 }
                 ERROR -> {
-                    showShortToast(it.message ?: getString(R.string.default_error_message))
                 }
                 LOADING -> {
                 }
@@ -45,12 +65,14 @@ class MainActivity : AppCompatActivity() {
         }
 
         mViewModel.movieDetailsResponse.observe(this) {
+            binding.status = it.status
+            binding.errorLayout.errorMsg.text = it.message
             when (it.status) {
                 SUCCESS -> {
                     LogHelper.logD("API_RESPONSE", "MOVIE DETAILS -> ${it.data}")
+                    binding.model = it.data
                 }
                 ERROR -> {
-                    showShortToast(it.message ?: getString(R.string.default_error_message))
                 }
                 LOADING -> {
                 }
@@ -59,12 +81,19 @@ class MainActivity : AppCompatActivity() {
 
     }
 
-    private fun setupListeners() {}
-    private fun loadData() {
+    private fun setupListeners() {
+        binding.btnBook.setOnClickListener {
+            showShortToast("Under Development")
+        }
 
-        mViewModel.getMovieCredits(BuildConfig.API_KEY, ENGLISH)
-        mViewModel.getMovieCredits(BuildConfig.API_KEY, ENGLISH)
+        binding.errorLayout.retryButton.setOnClickListener {
+            mViewModel.getMovieDetails(BuildConfig.API_KEY, ENGLISH)
+            mViewModel.getMovieCredits(BuildConfig.API_KEY, ENGLISH)
+        }
     }
 
-
+    private fun loadData() {
+        mViewModel.getMovieDetails(BuildConfig.API_KEY, ENGLISH)
+        mViewModel.getMovieCredits(BuildConfig.API_KEY, ENGLISH)
+    }
 }

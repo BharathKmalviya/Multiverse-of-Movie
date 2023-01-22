@@ -4,6 +4,7 @@ package com.multiverseofmovie.models
 import com.google.gson.annotations.SerializedName
 import kotlinx.parcelize.Parcelize
 import android.os.Parcelable
+import com.multiverseofmovie.constants.AppConstants
 
 @Parcelize
 data class Cast(
@@ -31,4 +32,10 @@ data class Cast(
     val popularity: Double = 0.0,
     @SerializedName("profile_path")
     val profilePath: String? = null
-) : Parcelable
+) : Parcelable{
+
+    fun getProfileImage() = AppConstants.IMAGE_BASE_URL+profilePath
+    override fun toString(): String {
+        return "Cast(adult=$adult, castId=$castId, character='$character', creditId='$creditId', gender=$gender, id=$id, knownForDepartment='$knownForDepartment', name='$name', order=$order, originalName='$originalName', popularity=$popularity, profilePath=$profilePath)"
+    }
+}

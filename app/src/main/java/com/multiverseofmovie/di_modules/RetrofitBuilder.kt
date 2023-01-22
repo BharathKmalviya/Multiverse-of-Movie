@@ -23,7 +23,6 @@ import javax.inject.Singleton
 @InstallIn(SingletonComponent::class)
 class RetrofitBuilder {
 
-
     @Provides
     @Singleton
     fun provideOkHttpClient(@ApplicationContext context: Context): OkHttpClient {
@@ -46,7 +45,7 @@ class RetrofitBuilder {
     fun providesRetrofit(okHttpClient: OkHttpClient):Retrofit {
         return Retrofit.Builder()
             .addConverterFactory(GsonConverterFactory.create())
-            .baseUrl("https://api.themoviedb.org/3/movie/453395/")
+            .baseUrl("https://api.themoviedb.org/")
             .client(okHttpClient)
             .build()
     }
