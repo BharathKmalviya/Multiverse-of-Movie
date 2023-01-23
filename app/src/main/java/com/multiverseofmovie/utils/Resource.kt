@@ -2,9 +2,7 @@ package com.multiverseofmovie.utils
 
 import com.multiverseofmovie.enums.Status
 
-/*
-*
-* */
+// Resource class to handle the data with status and message
 data class Resource<out T>(val status: Status, val data: T?, val message: String?) {
     companion object {
 

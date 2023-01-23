@@ -8,7 +8,6 @@ import dagger.hilt.InstallIn
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
 import okhttp3.OkHttpClient
-import okhttp3.Request
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
@@ -23,6 +22,7 @@ import javax.inject.Singleton
 @InstallIn(SingletonComponent::class)
 class RetrofitBuilder {
 
+    // this provides the okHttpClient for the retrofit
     @Provides
     @Singleton
     fun provideOkHttpClient(@ApplicationContext context: Context): OkHttpClient {
@@ -40,6 +40,7 @@ class RetrofitBuilder {
         return okHttpClient.build()
     }
 
+    // this provides the retrofit instance to use in the api services
     @Provides
     @Singleton
     fun providesRetrofit(okHttpClient: OkHttpClient):Retrofit {
@@ -50,6 +51,7 @@ class RetrofitBuilder {
             .build()
     }
 
+    // this provides the api services instance to use in the repository
     @Provides
     @Singleton
     fun providesApService(retrofit: Retrofit): ApiServices {

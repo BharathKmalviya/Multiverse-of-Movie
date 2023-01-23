@@ -9,7 +9,8 @@ import com.multiverseofmovie.adapters.CastAdapter
 import com.multiverseofmovie.adapters.CrewAdapter
 import com.multiverseofmovie.constants.AppConstants.ENGLISH
 import com.multiverseofmovie.databinding.ActivityMainBinding
-import com.multiverseofmovie.enums.Status.*
+import com.multiverseofmovie.enums.Status.ERROR
+import com.multiverseofmovie.enums.Status.SUCCESS
 import com.multiverseofmovie.utils.LogHelper
 import com.multiverseofmovie.utils.showShortToast
 import dagger.hilt.android.AndroidEntryPoint
@@ -32,11 +33,13 @@ class MainActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        binding = ActivityMainBinding.inflate(layoutInflater)
+        // this is to make the status bar transparent
         window.setFlags(
             WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS,
             WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS
         )
+
+        binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
         initView()
         setupObservers()
@@ -45,40 +48,31 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun initView() {
+        // this is to set the adapter to recyclerview
         binding.recCrew.adapter = mCrewAdapter
         binding.recCasts.adapter = mCastAdapter
     }
 
     private fun setupObservers() {
         mViewModel.movieCreditsResponse.observe(this) {
-            when (it.status) {
-                SUCCESS -> {
-                    LogHelper.logD("API_RESPONSE", "MOVIE CREDITS -> ${it.data}")
-                    mCastAdapter.submitList(it.data?.cast.orEmpty())
-                    mCrewAdapter.submitList(it.data?.crew.orEmpty())
-                }
-                ERROR -> {
-                }
-                LOADING -> {
-                }
+            if (it.status == SUCCESS) {
+                LogHelper.logD("API_RESPONSE", "MOVIE CREDITS -> ${it.data}")
+                mCastAdapter.submitList(it.data?.cast.orEmpty())
+                mCrewAdapter.submitList(it.data?.crew.orEmpty())
+            } else if (it.status == ERROR) {
+                showShortToast(it.message.orEmpty())
             }
         }
 
         mViewModel.movieDetailsResponse.observe(this) {
             binding.status = it.status
-            binding.errorLayout.errorMsg.text = it.message
-            when (it.status) {
-                SUCCESS -> {
-                    LogHelper.logD("API_RESPONSE", "MOVIE DETAILS -> ${it.data}")
-                    binding.model = it.data
-                }
-                ERROR -> {
-                }
-                LOADING -> {
-                }
+            if (it.status == SUCCESS) {
+                LogHelper.logD("API_RESPONSE", "MOVIE DETAILS -> ${it.data}")
+                binding.model = it.data
+            } else if (it.status == ERROR) {
+                binding.errorLayout.errorMsg.text = it.message
             }
         }
-
     }
 
     private fun setupListeners() {

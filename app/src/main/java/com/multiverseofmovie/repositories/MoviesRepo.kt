@@ -1,17 +1,12 @@
 package com.multiverseofmovie.repositories
 
 import android.content.Context
-import com.multiverseofmovie.R
 import com.multiverseofmovie.api_services.ApiServices
 import com.multiverseofmovie.extensions.safeApiCall
-import com.multiverseofmovie.models.BaseApiModel
 import com.multiverseofmovie.models.MovieCreditsModel
 import com.multiverseofmovie.models.MovieDetailsModel
-import com.multiverseofmovie.utils.LogHelper
 import com.multiverseofmovie.utils.Resource
-import com.multiverseofmovie.utils.isConnectedToInternet
 import dagger.hilt.android.qualifiers.ApplicationContext
-import retrofit2.Response
 import javax.inject.Inject
 
 class MoviesRepo @Inject constructor(
@@ -24,6 +19,7 @@ class MoviesRepo @Inject constructor(
         val params = HashMap<String, String>()
         params["api_key"] = apiKey
         params["language"] = language
+        // this is api call and using safeApiCall extension function to handle the api call with try catch
         return context.safeApiCall(MovieDetailsModel::class.java){
             apiServices.getMovieDetails(params)
         }
@@ -34,6 +30,7 @@ class MoviesRepo @Inject constructor(
         val params = HashMap<String, String>()
         params["api_key"] = apiKey
         params["language"] = language
+        // this is api call and using safeApiCall extension function to handle the api call with try catch
         return context.safeApiCall(MovieCreditsModel::class.java){
             apiServices.getMovieCredits(params)
         }

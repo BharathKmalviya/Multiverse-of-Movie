@@ -13,6 +13,7 @@ import retrofit2.Response
 import java.net.SocketTimeoutException
 import javax.net.ssl.SSLException
 
+// this is to handle the API calls with exception handling
 suspend fun <T> Context.safeApiCall(
     objectType: Class<T>,
     process: suspend () -> Response<*>
@@ -48,40 +49,28 @@ suspend fun <T> Context.safeApiCall(
     }
 }
 
+// this is to parse the response from API with data wrapped in Resource class with status and message
 fun <T> Response<*>.getResponse(context: Context, objectType: Class<T>): Resource<T> {
     if (isConnectedToInternet(context)) {
         val response = this
         try {
-            if (response.isSuccessful) {
-                return if (objectType.isAssignableFrom(BaseApiModel::class.java)) {
-                    val baseApiModel = response.body() as BaseApiModel
-                    Resource.create(
-                        status = Status.SUCCESS,
-                        data = baseApiModel as T,
-                        message = baseApiModel.statusMessage
-                    )
-                } else {
-                    val formattedModel = Gson().fromJson(response.body() as JsonElement, objectType)
-                    Resource.create(
-                        Status.SUCCESS,
-                        data = formattedModel,
-                        message = response.message()
-                    )
-                }
+            return if (response.isSuccessful) {
+                val formattedModel = Gson().fromJson(response.body() as JsonElement, objectType)
+                Resource.create(Status.SUCCESS, data = formattedModel, message = response.message())
             } else {
-                return if (objectType.isAssignableFrom(BaseApiModel::class.java)) {
-                    val baseApiModel = response.body() as BaseApiModel
-                    Resource.create(
-                        status = Status.SUCCESS,
-                        data = baseApiModel as T,
-                        message = baseApiModel.statusMessage
+                try {
+                    val message: BaseApiModel = Gson().fromJson(
+                        response.errorBody()?.charStream(),
+                        BaseApiModel::class.java
                     )
-                } else {
                     Resource.create(
                         status = Status.ERROR,
-                        data = /*response.body()*/ null,
-                        message = response.message()
+                        data = null,
+                        message = message.statusMessage
                     )
+                } catch (e: Exception) {
+                    LogHelper.printStackTrace(e)
+                    Resource.error(context.getString(R.string.default_error_message), data = null)
                 }
             }
         } catch (e: Exception) {

@@ -11,7 +11,7 @@
     <string name="hello_second_fragment">Hello second fragment. Arg: %1$s</string>
     <string name="back_drop_image">Back drop image</string>
     <string name="no_internet_connection">No internet connection</string>
-    <string name="default_error_message">something goes wrong</string>
+    <string name="default_error_message">something went wrong</string>
     <string name="book_tickets">Book Tickets</string>
     <string name="genres">Genres</string>
     <string name="release">Release</string>

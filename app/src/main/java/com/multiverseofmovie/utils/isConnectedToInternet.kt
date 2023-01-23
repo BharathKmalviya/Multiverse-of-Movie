@@ -4,6 +4,7 @@ import android.content.Context
 import android.net.ConnectivityManager
 import android.net.NetworkCapabilities
 
+// Check if the device is connected to the internet
 fun isConnectedToInternet(context: Context?) =
     (context?.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager).run {
         getNetworkCapabilities(activeNetwork)?.run {

@@ -5,10 +5,7 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.AsyncDifferConfig
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView.ViewHolder
-import com.multiverseofmovie.R
-import com.multiverseofmovie.databinding.ItemCastBinding
 import com.multiverseofmovie.databinding.ItemCrewBinding
-import com.multiverseofmovie.extensions.loadImage
 import com.multiverseofmovie.models.Crew
 
 class CrewAdapter : androidx.recyclerview.widget.ListAdapter<Crew, CrewAdapter.ItemViewHolder>(
@@ -29,11 +26,13 @@ class CrewAdapter : androidx.recyclerview.widget.ListAdapter<Crew, CrewAdapter.I
     }
 
     override fun onBindViewHolder(holder: ItemViewHolder, position: Int) {
+        // passing model to view holder
         holder.bindData(currentList[position])
     }
 
-    inner class ItemViewHolder(val binding: ItemCrewBinding) : ViewHolder(binding.root) {
+    inner class ItemViewHolder(private val binding: ItemCrewBinding) : ViewHolder(binding.root) {
         fun bindData(crew: Crew) {
+            // binding model to UI
             binding.model = crew
         }
     }

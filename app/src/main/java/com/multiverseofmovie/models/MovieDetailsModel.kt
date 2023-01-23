@@ -64,7 +64,8 @@ data class MovieDetailsModel(
     val voteCount: Int = 0
 ) : Parcelable, BaseApiModel() {
 
-    fun getGenresStr() = TextUtils.join(", ", genres.map { it.name })
+    // get the movie genres as comma separated string
+    fun getGenresStr(): String = TextUtils.join(", ", genres.map { it.name })
 
     fun getBackDrop() = IMAGE_BASE_URL + posterPath
 
@@ -73,15 +74,24 @@ data class MovieDetailsModel(
     fun getBudgetFormatted() = "$${getFormattedNumber(budget)}"
     fun getRevenueFormatted() = "$${getFormattedNumber(revenue)}"
 
-    fun getFormattedDate():String{
-        return DateTimeHelper.convertDateFormat(releaseDate,DateTimeHelper.DATE_FORMAT.YYYY_MM_DD,DateTimeHelper.DATE_FORMAT.DD_MMM_YYYY)?:releaseDate
+    fun getFormattedDate(): String {
+        return DateTimeHelper.convertDateFormat(
+            releaseDate,
+            DateTimeHelper.DATE_FORMAT.YYYY_MM_DD,
+            DateTimeHelper.DATE_FORMAT.DD_MMM_YYYY
+        ) ?: releaseDate
     }
 
-    fun getMovieTime():String{
-        return DateTimeHelper.convertDateFormat(releaseDate,DateTimeHelper.DATE_FORMAT.YYYY_MM_DD,DateTimeHelper.DATE_FORMAT.DD_MMM_YYYY)?:releaseDate
+    fun getMovieTime(): String {
+        return DateTimeHelper.convertDateFormat(
+            releaseDate,
+            DateTimeHelper.DATE_FORMAT.YYYY_MM_DD,
+            DateTimeHelper.DATE_FORMAT.DD_MMM_YYYY
+        ) ?: releaseDate
     }
 
-    fun getFormattedNumber(count: Long): String {
+    // get amount in k, M, B, T
+    private fun getFormattedNumber(count: Long): String {
         if (count < 1000) return "" + count
         val exp = (ln(count.toDouble()) / ln(1000.0)).toInt()
         return String.format("%.1f %c", count / 1000.0.pow(exp.toDouble()), "kMGTPE"[exp - 1])

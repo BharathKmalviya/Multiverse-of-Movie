@@ -3,6 +3,7 @@ package com.multiverseofmovie.utils
 import android.util.Log
 import com.multiverseofmovie.BuildConfig
 
+// LogHelper is a helper class to print logs in debug mode
 object LogHelper {
     fun systemOutPrint(log_str: String?) {
         if (BuildConfig.DEBUG) println(log_str)

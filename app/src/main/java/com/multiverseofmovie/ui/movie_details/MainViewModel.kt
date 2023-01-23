@@ -12,16 +12,20 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
+// this is view model class for movie details screen
 @HiltViewModel
 class MainViewModel @Inject constructor(private val moviesRepo: MoviesRepo):ViewModel() {
 
+    // live data for movie details
     private val _movieDetailsResponse  = MutableLiveData<Resource<MovieDetailsModel>>()
     val movieDetailsResponse  : LiveData<Resource<MovieDetailsModel>> = _movieDetailsResponse
 
+    // live data for movie credits
     private val _movieCreditsResponse  = MutableLiveData<Resource<MovieCreditsModel>>()
     val movieCreditsResponse  : LiveData<Resource<MovieCreditsModel>> = _movieCreditsResponse
 
 
+    // this function is used to get movie details
     fun getMovieDetails(apiKey:String, language:String){
         viewModelScope.launch {
             _movieDetailsResponse.postValue(Resource.loading())
@@ -29,6 +33,7 @@ class MainViewModel @Inject constructor(private val moviesRepo: MoviesRepo):View
         }
     }
 
+    // this function is used to get movie credits
     fun getMovieCredits(apiKey:String, language:String){
         viewModelScope.launch {
             _movieCreditsResponse.postValue(Resource.loading())
