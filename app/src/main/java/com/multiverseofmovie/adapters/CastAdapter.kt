@@ -8,7 +8,9 @@ import androidx.recyclerview.widget.RecyclerView.ViewHolder
 import com.multiverseofmovie.databinding.ItemCastBinding
 import com.multiverseofmovie.models.Cast
 
+// using ListAdapter for better performance
 class CastAdapter : androidx.recyclerview.widget.ListAdapter<Cast, CastAdapter.ItemViewHolder>(
+    // using AsyncDifferConfig to compare items and contents of items in list for better performance and to update only changed items
     AsyncDifferConfig.Builder(object : DiffUtil.ItemCallback<Cast>() {
         override fun areItemsTheSame(oldItem: Cast, newItem: Cast): Boolean {
             return oldItem.id == newItem.id
@@ -17,7 +19,6 @@ class CastAdapter : androidx.recyclerview.widget.ListAdapter<Cast, CastAdapter.I
         override fun areContentsTheSame(oldItem: Cast, newItem: Cast): Boolean {
             return oldItem.toString() == newItem.toString()
         }
-
     }).build()
 ) {
 

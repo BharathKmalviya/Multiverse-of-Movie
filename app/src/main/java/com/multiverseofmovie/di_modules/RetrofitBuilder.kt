@@ -22,7 +22,7 @@ import javax.inject.Singleton
 @InstallIn(SingletonComponent::class)
 class RetrofitBuilder {
 
-    // this provides the okHttpClient for the retrofit
+    // this provides the okHttpClient instance for the retrofit
     @Provides
     @Singleton
     fun provideOkHttpClient(@ApplicationContext context: Context): OkHttpClient {

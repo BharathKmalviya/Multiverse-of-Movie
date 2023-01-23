@@ -8,7 +8,9 @@ import androidx.recyclerview.widget.RecyclerView.ViewHolder
 import com.multiverseofmovie.databinding.ItemCrewBinding
 import com.multiverseofmovie.models.Crew
 
+// using ListAdapter for better performance
 class CrewAdapter : androidx.recyclerview.widget.ListAdapter<Crew, CrewAdapter.ItemViewHolder>(
+    // using AsyncDifferConfig to compare items and contents of items in list for better performance and to update only changed items
     AsyncDifferConfig.Builder(object : DiffUtil.ItemCallback<Crew>() {
         override fun areItemsTheSame(oldItem: Crew, newItem: Crew): Boolean {
             return oldItem.id == newItem.id
